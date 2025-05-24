@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Онлайн магазин.</title>
+</head>
+<body>
+<div style="display: flex">
+    <div data-th-each="product : ${products}" style="border: solid 2px black; width: 300px">
+        <p data-th-text="${product.title}"></p>
+        <p style="color: green"><span th:text="${product.price}"/> ₽</p>
+    </div>
+</div>
+</body>
+</html>
