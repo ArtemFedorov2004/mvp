@@ -1,0 +1,4 @@
+online-store:
+  services:
+    online-store-api:
+      uri: http://localhost:54321
