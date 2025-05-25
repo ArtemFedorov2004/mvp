@@ -5,10 +5,13 @@
     <title>Онлайн магазин.</title>
 </head>
 <body>
+<h1>Все товары представленные в магазине.</h1>
 <div style="display: flex">
     <div data-th-each="product : ${products}" style="border: solid 2px black; width: 300px">
-        <p data-th-text="${product.title}"></p>
-        <p style="color: green"><span th:text="${product.price}"/> ₽</p>
+        <a th:href="@{/online-store/products/{id}(id=${product.id})}">
+            <p data-th-text="${product.title}"></p>
+            <p style="color: green"><span th:text="${product.price}"/> ₽</p>
+        </a>
     </div>
 </div>
 </body>
