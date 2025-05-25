@@ -43,4 +43,49 @@ class ProductsRestControllerIT {
                                 ]""")
                 );
     }
+
+    @Test
+    @Sql("/sql/products.sql")
+    void getProduct_ProductExists_ReturnsProductsList() throws Exception {
+        // given
+        var requestBuilder = MockMvcRequestBuilders.get("/online-store-api/products/1");
+
+        // when
+        this.mockMvc.perform(requestBuilder)
+                // then
+                .andDo(print())
+                .andExpectAll(
+                        status().isOk(),
+                        content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON),
+                        content().json("""
+                                {
+                                    "id": 1,
+                                    "title": "Ананас",
+                                    "price": 100
+                                }""")
+                );
+    }
+
+    @Test
+    @Sql("/sql/products.sql")
+    void getProduct_ProductDoesNotExist_ReturnsNotFound() throws Exception {
+        // given
+        var requestBuilder = MockMvcRequestBuilders.get("/online-store-api/products/10");
+
+        // when
+        this.mockMvc.perform(requestBuilder)
+                // then
+                .andDo(print())
+                .andExpectAll(
+                        status().isNotFound(),
+                        content().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON),
+                        content().json("""
+                                {
+                                    "title": "Not Found",
+                                    "status": 404,
+                                    "detail": "Товар не найден",
+                                    "instance": "/online-store-api/products/10"
+                                }""")
+                );
+    }
 }
