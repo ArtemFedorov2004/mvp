@@ -53,4 +53,53 @@ public class ProductsControllerIT {
 
         WireMock.verify(WireMock.getRequestedFor(WireMock.urlPathMatching("/online-store-api/products")));
     }
+
+    @Test
+    void getProduct_ProductExists_ReturnsProductPage() throws Exception {
+        // given
+        var requestBuilder = MockMvcRequestBuilders.get("/online-store/products/1");
+
+        WireMock.stubFor(WireMock.get(WireMock.urlPathMatching("/online-store-api/products/1"))
+                .willReturn(WireMock.ok("""
+                        {
+                            "id": 1,
+                            "title": "Товар №1",
+                            "price": 100
+                        }
+                        """).withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)));
+
+        // when
+        this.mockMvc.perform(requestBuilder)
+                // then
+                .andDo(print())
+                .andExpectAll(
+                        status().isOk(),
+                        view().name("online-store/products/product"),
+                        model().attribute("product",
+                                new Product(1L, "Товар №1", new BigDecimal(100)))
+                );
+
+        WireMock.verify(WireMock.getRequestedFor(WireMock.urlPathMatching("/online-store-api/products/1")));
+    }
+
+    @Test
+    void getProduct_ProductDoesNotExist_ReturnsError404Page() throws Exception {
+        // given
+        var requestBuilder = MockMvcRequestBuilders.get("/online-store/products/1");
+
+        WireMock.stubFor(WireMock.get(WireMock.urlPathMatching("/online-store-api/products/1"))
+                .willReturn(WireMock.notFound()));
+
+        // when
+        this.mockMvc.perform(requestBuilder)
+                // then
+                .andDo(print())
+                .andExpectAll(
+                        status().isNotFound(),
+                        view().name("errors/404"),
+                        model().attribute("error", "Товар не найден")
+                );
+
+        WireMock.verify(WireMock.getRequestedFor(WireMock.urlPathMatching("/online-store-api/products/1")));
+    }
 }
