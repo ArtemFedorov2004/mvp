@@ -10,6 +10,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -26,7 +27,8 @@ class ProductsRestControllerIT {
     @Sql("/sql/products.sql")
     void getAllProducts_ReturnsProductList() throws Exception {
         // given
-        var requestBuilder = MockMvcRequestBuilders.get("/online-store-api/products");
+        var requestBuilder = MockMvcRequestBuilders.get("/online-store-api/products")
+                .with(jwt().jwt(builder -> builder.claim("scope", "view_online_store")));
 
         // when
         this.mockMvc.perform(requestBuilder)
@@ -46,9 +48,26 @@ class ProductsRestControllerIT {
 
     @Test
     @Sql("/sql/products.sql")
+    void getAllProducts_UserIsNotAuthorized_ReturnsForbidden() throws Exception {
+        // given
+        var requestBuilder = MockMvcRequestBuilders.get("/online-store-api/products")
+                .with(jwt());
+
+        // when
+        this.mockMvc.perform(requestBuilder)
+                // then
+                .andDo(print())
+                .andExpectAll(
+                        status().isForbidden()
+                );
+    }
+
+    @Test
+    @Sql("/sql/products.sql")
     void getProduct_ProductExists_ReturnsProductsList() throws Exception {
         // given
-        var requestBuilder = MockMvcRequestBuilders.get("/online-store-api/products/1");
+        var requestBuilder = MockMvcRequestBuilders.get("/online-store-api/products/1")
+                .with(jwt().jwt(builder -> builder.claim("scope", "view_online_store")));
 
         // when
         this.mockMvc.perform(requestBuilder)
@@ -70,7 +89,8 @@ class ProductsRestControllerIT {
     @Sql("/sql/products.sql")
     void getProduct_ProductDoesNotExist_ReturnsNotFound() throws Exception {
         // given
-        var requestBuilder = MockMvcRequestBuilders.get("/online-store-api/products/10");
+        var requestBuilder = MockMvcRequestBuilders.get("/online-store-api/products/10")
+                .with(jwt().jwt(builder -> builder.claim("scope", "view_online_store")));
 
         // when
         this.mockMvc.perform(requestBuilder)
@@ -86,6 +106,22 @@ class ProductsRestControllerIT {
                                     "detail": "Товар не найден",
                                     "instance": "/online-store-api/products/10"
                                 }""")
+                );
+    }
+
+    @Test
+    @Sql("/sql/products.sql")
+    void getProduct_UserIsNotAuthorized_ReturnsForbidden() throws Exception {
+        // given
+        var requestBuilder = MockMvcRequestBuilders.get("/online-store-api/products/1")
+                .with(jwt());
+
+        // when
+        this.mockMvc.perform(requestBuilder)
+                // then
+                .andDo(print())
+                .andExpectAll(
+                        status().isForbidden()
                 );
     }
 }

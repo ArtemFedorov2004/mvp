@@ -15,6 +15,8 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import java.math.BigDecimal;
 import java.util.List;
 
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -29,7 +31,8 @@ public class ProductsControllerIT {
     @Test
     void getProductList_ReturnsProductsListPage() throws Exception {
         // given
-        var requestBuilder = MockMvcRequestBuilders.get("/online-store/products/list");
+        var requestBuilder = MockMvcRequestBuilders.get("/online-store/products/list")
+                .with(user("andrey"));
 
         WireMock.stubFor(WireMock.get(WireMock.urlPathMatching("/online-store-api/products"))
                 .willReturn(WireMock.ok("""
@@ -55,9 +58,24 @@ public class ProductsControllerIT {
     }
 
     @Test
+    void getProductList_UserIsNotAuthorized_RedirectsToLoginPage() throws Exception {
+        // given
+        var requestBuilder = MockMvcRequestBuilders.get("/online-store/products/list");
+
+        // when
+        this.mockMvc.perform(requestBuilder)
+                // then
+                .andDo(print())
+                .andExpectAll(
+                        status().is3xxRedirection()
+                );
+    }
+
+    @Test
     void getProduct_ProductExists_ReturnsProductPage() throws Exception {
         // given
-        var requestBuilder = MockMvcRequestBuilders.get("/online-store/products/1");
+        var requestBuilder = MockMvcRequestBuilders.get("/online-store/products/1")
+                .with(user("andrey"));
 
         WireMock.stubFor(WireMock.get(WireMock.urlPathMatching("/online-store-api/products/1"))
                 .willReturn(WireMock.ok("""
@@ -85,7 +103,8 @@ public class ProductsControllerIT {
     @Test
     void getProduct_ProductDoesNotExist_ReturnsError404Page() throws Exception {
         // given
-        var requestBuilder = MockMvcRequestBuilders.get("/online-store/products/1");
+        var requestBuilder = MockMvcRequestBuilders.get("/online-store/products/1")
+                .with(user("andrey"));
 
         WireMock.stubFor(WireMock.get(WireMock.urlPathMatching("/online-store-api/products/1"))
                 .willReturn(WireMock.notFound()));
@@ -101,5 +120,19 @@ public class ProductsControllerIT {
                 );
 
         WireMock.verify(WireMock.getRequestedFor(WireMock.urlPathMatching("/online-store-api/products/1")));
+    }
+
+    @Test
+    void getProduct_UserIsNotAuthorized_RedirectsToLoginPage() throws Exception {
+        // given
+        var requestBuilder = MockMvcRequestBuilders.get("/online-store/products/1");
+
+        // when
+        this.mockMvc.perform(requestBuilder)
+                // then
+                .andDo(print())
+                .andExpectAll(
+                        status().is3xxRedirection()
+                );
     }
 }

@@ -2,5 +2,23 @@ online-store:
   services:
     online-store-service:
       uri: http://localhost:8080
+      registration-id: keycloak
+
 server:
   port: 8081
+spring:
+  security:
+    oauth2:
+      client:
+        provider:
+          keycloak:
+            issuer-uri: http://localhost:8082/realms/online-store
+            user-name-attribute: preferred_username
+        registration:
+          keycloak:
+            client-id: customer-app
+            client-secret: xbpAeDCjrlRelfLjtHicQZ2qtpXfzd0z
+            scope:
+              - openid
+              - view_online_store
+              - microprofile-jwt

@@ -7,3 +7,15 @@ spring:
     schemas:
       - public
       - online-store
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8082/realms/online-store
+keycloak:
+  uri: http://localhost:8082
+springdoc:
+  swagger-ui:
+    oauth:
+      client-id: online-store-service-swagger-ui
+      use-pkce-with-authorization-code-grant: true
