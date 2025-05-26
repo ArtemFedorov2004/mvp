@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -26,15 +27,21 @@ public class ProductsController {
     private final MessageSource messageSource;
 
     @GetMapping("list")
-    public String getProductsList(Model model) {
+    public String getProductsList(Model model, OAuth2AuthenticationToken authenticationToken) {
+        String preferredUsername = authenticationToken.getPrincipal()
+                .getAttribute("preferred_username");
+        model.addAttribute("username", preferredUsername);
         model.addAttribute("products", this.productsRestClient.getAllProducts());
         return "online-store/products/list";
     }
 
     @GetMapping("{productId:\\d+}")
-    public String getProduct(@PathVariable("productId") long productId, Model model) {
+    public String getProduct(@PathVariable("productId") long productId, Model model, OAuth2AuthenticationToken authenticationToken) {
         Product product = this.productsRestClient.getProduct(productId)
                 .orElseThrow(() -> new ResourceNotFoundException("online-store.errors.product.not_found"));
+        String preferredUsername = authenticationToken.getPrincipal()
+                .getAttribute("preferred_username");
+        model.addAttribute("username", preferredUsername);
         model.addAttribute("product", product);
         return "online-store/products/product";
     }

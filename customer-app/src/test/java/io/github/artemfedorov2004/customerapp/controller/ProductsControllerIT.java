@@ -9,14 +9,17 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.oauth2.core.oidc.OidcIdToken;
+import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.math.BigDecimal;
 import java.util.List;
 
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oidcLogin;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -31,8 +34,14 @@ public class ProductsControllerIT {
     @Test
     void getProductList_ReturnsProductsListPage() throws Exception {
         // given
+        OidcUser oidcUser = new DefaultOidcUser(
+                AuthorityUtils.createAuthorityList("SCOPE_view_online_store"),
+                OidcIdToken.withTokenValue("id-token")
+                        .claim("preferred_username", "andrey")
+                        .build(),
+                "preferred_username");
         var requestBuilder = MockMvcRequestBuilders.get("/online-store/products/list")
-                .with(user("andrey"));
+                .with(oidcLogin().oidcUser(oidcUser));
 
         WireMock.stubFor(WireMock.get(WireMock.urlPathMatching("/online-store-api/products"))
                 .willReturn(WireMock.ok("""
@@ -51,7 +60,8 @@ public class ProductsControllerIT {
                         model().attribute("products", List.of(
                                 new Product(1L, "Товар №1", new BigDecimal(100)),
                                 new Product(2L, "Товар №2", new BigDecimal(200))
-                        ))
+                        )),
+                        model().attribute("username", "andrey")
                 );
 
         WireMock.verify(WireMock.getRequestedFor(WireMock.urlPathMatching("/online-store-api/products")));
@@ -74,8 +84,14 @@ public class ProductsControllerIT {
     @Test
     void getProduct_ProductExists_ReturnsProductPage() throws Exception {
         // given
+        OidcUser oidcUser = new DefaultOidcUser(
+                AuthorityUtils.createAuthorityList("SCOPE_view_online_store"),
+                OidcIdToken.withTokenValue("id-token")
+                        .claim("preferred_username", "andrey")
+                        .build(),
+                "preferred_username");
         var requestBuilder = MockMvcRequestBuilders.get("/online-store/products/1")
-                .with(user("andrey"));
+                .with(oidcLogin().oidcUser(oidcUser));
 
         WireMock.stubFor(WireMock.get(WireMock.urlPathMatching("/online-store-api/products/1"))
                 .willReturn(WireMock.ok("""
@@ -94,7 +110,8 @@ public class ProductsControllerIT {
                         status().isOk(),
                         view().name("online-store/products/product"),
                         model().attribute("product",
-                                new Product(1L, "Товар №1", new BigDecimal(100)))
+                                new Product(1L, "Товар №1", new BigDecimal(100))),
+                        model().attribute("username", "andrey")
                 );
 
         WireMock.verify(WireMock.getRequestedFor(WireMock.urlPathMatching("/online-store-api/products/1")));
@@ -104,7 +121,7 @@ public class ProductsControllerIT {
     void getProduct_ProductDoesNotExist_ReturnsError404Page() throws Exception {
         // given
         var requestBuilder = MockMvcRequestBuilders.get("/online-store/products/1")
-                .with(user("andrey"));
+                .with(oidcLogin());
 
         WireMock.stubFor(WireMock.get(WireMock.urlPathMatching("/online-store-api/products/1"))
                 .willReturn(WireMock.notFound()));
