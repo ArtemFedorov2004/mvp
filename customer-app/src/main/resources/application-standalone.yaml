@@ -20,5 +20,4 @@ spring:
             client-secret: xbpAeDCjrlRelfLjtHicQZ2qtpXfzd0z
             scope:
               - openid
-              - view_online_store
               - microprofile-jwt

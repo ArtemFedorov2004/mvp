@@ -6,10 +6,11 @@
 </head>
 <body>
 <h1>Страница товара.</h1>
-<h2>Добро пожаловать, <span th:text="${username}"/></h2>
+<a href="/oauth2/authorization/keycloak" th:if="${username == null}">Войти</a>
+<h2 th:if="${username != null}">Добро пожаловать, [[${username}]]</h2>
 <div style="border: solid 2px black; width: 300px">
     <p data-th-text="${product.title}"></p>
-    <p style="color: green"><span th:text="${product.price}"/> ₽</p>
+    <p style="color: green">[[${product.price}]] ₽</p>
 </div>
 </body>
 </html>

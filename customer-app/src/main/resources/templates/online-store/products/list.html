@@ -6,13 +6,14 @@
 </head>
 <body>
 <h1>Все товары представленные в магазине.</h1>
-<h2>Добро пожаловать, <span th:text="${username}"/></h2>
-<div style="display: flex">
-    <div data-th-each="product : ${products}" style="border: solid 2px black; width: 300px; cursor: pointer"
+<a href="/oauth2/authorization/keycloak" th:if="${username == null}">Войти</a>
+<h2 th:if="${username != null}">Добро пожаловать, [[${username}]]</h2>
+<div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr;">
+    <div data-th-each="product : ${products}" style="border: solid 2px black;cursor: pointer; width: 100%"
          th:onclick="'window.location.href = \'' + @{/online-store/products/{id}(id=${product.id})} + '\''"
     >
         <p data-th-text="${product.title}"></p>
-        <p style="color: green"><span th:text="${product.price}"/> ₽</p>
+        <p style="color: green">[[${product.price}]] ₽</p>
     </div>
 </div>
 </body>
