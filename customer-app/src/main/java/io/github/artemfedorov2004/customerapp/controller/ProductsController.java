@@ -28,9 +28,11 @@ public class ProductsController {
 
     @GetMapping("list")
     public String getProductsList(Model model, OAuth2AuthenticationToken authenticationToken) {
-        String preferredUsername = authenticationToken.getPrincipal()
-                .getAttribute("preferred_username");
-        model.addAttribute("username", preferredUsername);
+        if (authenticationToken != null) {
+            String preferredUsername = authenticationToken.getPrincipal()
+                    .getAttribute("preferred_username");
+            model.addAttribute("username", preferredUsername);
+        }
         model.addAttribute("products", this.productsRestClient.getAllProducts());
         return "online-store/products/list";
     }
@@ -39,9 +41,11 @@ public class ProductsController {
     public String getProduct(@PathVariable("productId") long productId, Model model, OAuth2AuthenticationToken authenticationToken) {
         Product product = this.productsRestClient.getProduct(productId)
                 .orElseThrow(() -> new ResourceNotFoundException("online-store.errors.product.not_found"));
-        String preferredUsername = authenticationToken.getPrincipal()
-                .getAttribute("preferred_username");
-        model.addAttribute("username", preferredUsername);
+        if (authenticationToken != null) {
+            String preferredUsername = authenticationToken.getPrincipal()
+                    .getAttribute("preferred_username");
+            model.addAttribute("username", preferredUsername);
+        }
         model.addAttribute("product", product);
         return "online-store/products/product";
     }

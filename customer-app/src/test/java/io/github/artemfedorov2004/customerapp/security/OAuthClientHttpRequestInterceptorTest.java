@@ -9,7 +9,9 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.mock.http.client.MockClientHttpRequest;
 import org.springframework.mock.http.client.MockClientHttpResponse;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.TestingAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager;
@@ -17,6 +19,7 @@ import org.springframework.security.oauth2.core.OAuth2AccessToken;
 
 import java.io.IOException;
 import java.time.Instant;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.argThat;
@@ -36,7 +39,7 @@ class OAuthClientHttpRequestInterceptorTest {
     }
 
     @Test
-    void intercept_AuthorizationHeaderIsNotSet_AddsAuthorizationHeader() throws IOException {
+    void intercept_AuthorizationHeaderIsNotSetAndUserAuthenticated_AddsAuthorizationHeader() throws IOException {
         // given
         var request = new MockClientHttpRequest();
         byte[] body = new byte[0];
@@ -60,6 +63,30 @@ class OAuthClientHttpRequestInterceptorTest {
         // then
         assertEquals(response, result);
         assertEquals("Bearer token", request.getHeaders().getFirst(HttpHeaders.AUTHORIZATION));
+
+        verify(execution).execute(request, body);
+        verifyNoMoreInteractions(execution);
+    }
+
+    @Test
+    void intercept_AuthorizationHeaderIsNotSetAndUserIsNotAuthenticated_DoesNotAddAuthorizationHeader() throws IOException {
+        // given
+        var request = new MockClientHttpRequest();
+        byte[] body = new byte[0];
+        var execution = mock(ClientHttpRequestExecution.class);
+        var response = new MockClientHttpResponse();
+        var authentication = new AnonymousAuthenticationToken("key", "anonymousUser",
+                List.of(new SimpleGrantedAuthority("ROLE_ANONYMOUS")));
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        doReturn(response).when(execution).execute(request, body);
+
+        // when
+        var result = this.interceptor.intercept(request, body, execution);
+
+        // then
+        assertEquals(response, result);
+        assertNull(request.getHeaders().getFirst(HttpHeaders.AUTHORIZATION));
 
         verify(execution).execute(request, body);
         verifyNoMoreInteractions(execution);
