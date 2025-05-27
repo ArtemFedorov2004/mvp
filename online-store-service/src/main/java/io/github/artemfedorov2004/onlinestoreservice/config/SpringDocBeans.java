@@ -20,8 +20,7 @@ public class SpringDocBeans {
                             tokenUrl = "${keycloak.uri}/realms/online-store/protocol/openid-connect/token",
                             scopes = {
                                     @OAuthScope(name = "openid"),
-                                    @OAuthScope(name = "microprofile-jwt"),
-                                    @OAuthScope(name = "view_online_store")
+                                    @OAuthScope(name = "microprofile-jwt")
                             }
                     ))
     )
