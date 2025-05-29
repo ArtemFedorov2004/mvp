@@ -15,8 +15,7 @@ import java.util.Optional;
 import java.util.stream.LongStream;
 
 import static org.junit.Assert.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -76,6 +75,21 @@ public class DefaultProductServiceTest {
 
         // then
         verify(this.productRepository).findById(10L);
+        verifyNoMoreInteractions(this.productRepository);
+    }
+
+    @Test
+    void existsProductById_ReturnsBoolean() {
+        // given
+        doReturn(true).when(this.productRepository).existsById(1L);
+
+        // when
+        boolean result = this.service.existsProductById(1L);
+
+        // then
+        assertTrue(result);
+
+        verify(this.productRepository).existsById(1L);
         verifyNoMoreInteractions(this.productRepository);
     }
 }

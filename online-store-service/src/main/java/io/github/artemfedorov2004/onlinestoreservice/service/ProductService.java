@@ -7,4 +7,6 @@ public interface ProductService {
     Iterable<Product> getAllProducts();
 
     Product getProduct(Long productId);
+
+    boolean existsProductById(Long productId);
 }
