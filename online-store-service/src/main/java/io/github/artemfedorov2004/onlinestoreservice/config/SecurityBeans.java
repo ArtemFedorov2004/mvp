@@ -24,6 +24,12 @@ public class SecurityBeans {
                 .authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll()
                         .requestMatchers(HttpMethod.GET).permitAll()
+                        .requestMatchers(HttpMethod.POST, "/online-store-api/products/{productId:\\d+}/reviews")
+                        .hasAuthority("SCOPE_create_product_review")
+                        .requestMatchers(HttpMethod.PATCH, "/online-store-api/products/{productId:\\d+}/reviews")
+                        .hasAuthority("SCOPE_create_product_review")
+                        .requestMatchers(HttpMethod.DELETE, "/online-store-api/products/{productId:\\d+}/reviews")
+                        .hasAuthority("SCOPE_create_product_review")
                         .anyRequest().denyAll())
                 .csrf(CsrfConfigurer::disable)
                 .sessionManagement(sessionManagement -> sessionManagement

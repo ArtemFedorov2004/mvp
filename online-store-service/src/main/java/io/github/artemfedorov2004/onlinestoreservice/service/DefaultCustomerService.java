@@ -3,6 +3,9 @@ package io.github.artemfedorov2004.onlinestoreservice.service;
 import io.github.artemfedorov2004.onlinestoreservice.entity.Customer;
 import io.github.artemfedorov2004.onlinestoreservice.repository.CustomerRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.lang.Nullable;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,5 +38,25 @@ public class DefaultCustomerService implements CustomerService {
                     Customer saved = this.customerRepository.save(customer);
                     this.customerRepository.linkCustomerIdAndOidcUserId(saved.getId(), oidcUserId);
                 });
+    }
+
+    @Override
+    @Nullable
+    public Customer getCurrentCustomer() {
+        if (SecurityContextHolder.getContext().getAuthentication() instanceof AnonymousAuthenticationToken) {
+            return null;
+        }
+
+        JwtAuthenticationToken token = (JwtAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+
+        UUID oidcUserId = UUID.fromString(token.getName());
+
+        UUID id = this.customerRepository.findCustomerIdByOidcUserId(oidcUserId)
+                .orElseThrow(() -> new RuntimeException("Customer with given oidcUserId - %s not found"
+                        .formatted(oidcUserId.toString())));
+
+        return this.customerRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException(
+                        "Relation t_customer does not contain customer with id - %s".formatted(id.toString())));
     }
 }

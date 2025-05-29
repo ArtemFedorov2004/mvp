@@ -22,4 +22,9 @@ public class DefaultProductService implements ProductService {
         return this.productRepository.findById(productId)
                 .orElseThrow(() -> new ResourceNotFoundException("online_store.errors.product.not_found"));
     }
+
+    @Override
+    public boolean existsProductById(Long productId) {
+        return this.productRepository.existsById(productId);
+    }
 }
