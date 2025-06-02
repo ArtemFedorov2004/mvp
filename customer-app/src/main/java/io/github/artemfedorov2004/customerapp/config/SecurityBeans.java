@@ -25,8 +25,13 @@ public class SecurityBeans {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
-                        .requestMatchers(HttpMethod.GET).permitAll()
-                        .anyRequest().authenticated())
+                        .requestMatchers(HttpMethod.GET, "/online-store/products/*")
+                        .permitAll()
+                        .requestMatchers(HttpMethod.GET, "/online-store/products/{productId:\\d+}/reviews/create")
+                        .hasAuthority("SCOPE_create_product_review")
+                        .requestMatchers(HttpMethod.POST, "/online-store/products/{productId:\\d+}/reviews/create")
+                        .hasAuthority("SCOPE_create_product_review")
+                        .anyRequest().denyAll())
                 .oauth2Login(oauth2LoginCustomizer -> oauth2LoginCustomizer
                         .defaultSuccessUrl("/online-store/products/list"))
                 .oauth2Client(Customizer.withDefaults())

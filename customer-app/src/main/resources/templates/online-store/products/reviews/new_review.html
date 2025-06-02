@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Онлайн магазин</title>
+</head>
+<body>
+<h1 th:if="${username != null}">Добро пожаловать, [[${username}]]</h1>
+<h2>Напишите отзыв о товаре.</h2>
+<div data-th-if="${errors}">
+    <ul>
+        <li
+                data-th-each="error : ${errors}"
+                data-th-text="${error}"
+                style="color: red"
+        ></li>
+    </ul>
+</div>
+<form method="post" data-th-action="@{/online-store/products/{id}/reviews/create(id=${productId})}">
+    <label><input type="radio" name="rating" value="1"> 1</label>
+    <label><input type="radio" name="rating" value="2"> 2</label>
+    <label><input type="radio" name="rating" value="3"> 3</label>
+    <label><input type="radio" name="rating" value="4"> 4</label>
+    <label><input type="radio" name="rating" value="5"> 5</label>
+    <br>
+    <label>
+        <b>Достоинства:</b>
+        <textarea name="advantages" data-th-text="${payload?.advantages}"></textarea>
+    </label>
+    <br>
+    <label>
+        <b>Недостатки:</b>
+        <textarea name="disadvantages" data-th-text="${payload?.disadvantages}"></textarea>
+    </label>
+    <br>
+    <label>
+        <b>Комментарий:</b>
+        <textarea name="comment" data-th-text="${payload?.comment}"></textarea>
+    </label>
+    <br>
+    <br>
+    <button type="submit">Отправить отзыв</button>
+</form>
+</body>
+</html>

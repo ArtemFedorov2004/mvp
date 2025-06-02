@@ -21,3 +21,4 @@ spring:
             scope:
               - openid
               - microprofile-jwt
+              - create_product_review

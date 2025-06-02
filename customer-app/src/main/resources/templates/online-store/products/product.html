@@ -11,6 +11,43 @@
 <div style="border: solid 2px black; width: 300px">
     <p data-th-text="${product.title}"></p>
     <p style="color: green">[[${product.price}]] ₽</p>
+
+    <h3>Отзывы</h3>
+    <a th:href="@{/online-store/products/{id}/reviews/create(id=${product.id})}">Написать отзыв</a>
+    <br>
+    <div data-th-each="review : ${reviews}"
+         th:id="'review' + ${review.id}"
+    >
+        <br>
+        <b>Оценка: <span id="stars"></span></b>
+        <br>
+        <span>[[${#temporals.format(review.createdAt, 'dd-MM-yyyy')}]] * [[${review.createdBy.username}]]</span>
+        <span data-th-if="${review.advantages != null && review.advantages.isBlank() == false}">
+            <br>
+            <b>Достоинства: </b>[[${review.advantages}]]
+        </span>
+        <span data-th-if="${review.disadvantages != null && review.disadvantages.isBlank() == false}">
+            <br>
+            <b>Недостатки: </b>[[${review.disadvantages}]]</span>
+        <span data-th-if="${review.comment != null && review.comment.isBlank() == false}">
+            <br>
+            <b>Комментарий: </b>[[${review.comment}]]</span>
+        <br>
+    </div>
 </div>
 </body>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    const reviews = /*[[${reviews}]]*/ [];
+    reviews.forEach((review) => {
+        const reviewDiv = document.getElementById(`review${review.id}`)
+        const startsSpan = reviewDiv.querySelector('#stars')
+        let stars = "";
+        for (let i = 0; i < review.rating; i++) {
+            stars += "*";
+        }
+        startsSpan.textContent = stars;
+    })
+    /*]]>*/
+</script>
 </html>
