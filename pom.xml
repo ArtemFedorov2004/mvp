@@ -12,6 +12,7 @@
     <modules>
         <module>online-store-service</module>
         <module>customer-app</module>
+        <module>admin-server</module>
     </modules>
 
     <properties>

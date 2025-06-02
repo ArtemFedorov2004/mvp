@@ -1,4 +1,12 @@
 spring:
+  boot:
+    admin:
+      client:
+        enabled: true
+        instance:
+          name: online-store-service
+          service-host-type: ip
+        url: http://localhost:8083
   datasource:
     url: jdbc:postgresql://localhost:5433/online-store
     username: admin
@@ -12,6 +20,17 @@ spring:
       resourceserver:
         jwt:
           issuer-uri: http://localhost:8082/realms/online-store
+      client:
+        registration:
+          keycloak:
+            client-id: online-store-service-metrics-client
+            client-secret: e27KuEFHzGkhc6CABXZXWc83XOVBc9BQ
+            authorization-grant-type: client_credentials
+            scope:
+              - metrics_server
+        provider:
+          keycloak:
+            issuer-uri: http://localhost:8082/realms/online-store
 keycloak:
   uri: http://localhost:8082
 springdoc:
@@ -19,3 +38,13 @@ springdoc:
     oauth:
       client-id: online-store-service-swagger-ui
       use-pkce-with-authorization-code-grant: true
+management:
+  health:
+    livenessstate:
+      enabled: true
+    readinessstate:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: '*'
