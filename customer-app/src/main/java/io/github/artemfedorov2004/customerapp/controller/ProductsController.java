@@ -1,7 +1,9 @@
 package io.github.artemfedorov2004.customerapp.controller;
 
 import io.github.artemfedorov2004.customerapp.client.ProductsRestClient;
+import io.github.artemfedorov2004.customerapp.client.ReviewsRestClient;
 import io.github.artemfedorov2004.customerapp.entity.Product;
+import io.github.artemfedorov2004.customerapp.entity.Review;
 import io.github.artemfedorov2004.customerapp.exception.ResourceNotFoundException;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.List;
 import java.util.Locale;
 
 @Controller
@@ -23,6 +26,8 @@ import java.util.Locale;
 public class ProductsController {
 
     private final ProductsRestClient productsRestClient;
+
+    private final ReviewsRestClient reviewsRestClient;
 
     private final MessageSource messageSource;
 
@@ -41,17 +46,19 @@ public class ProductsController {
     public String getProduct(@PathVariable("productId") long productId, Model model, OAuth2AuthenticationToken authenticationToken) {
         Product product = this.productsRestClient.getProduct(productId)
                 .orElseThrow(() -> new ResourceNotFoundException("online-store.errors.product.not_found"));
+        List<Review> reviews = this.reviewsRestClient.getAllProductReviews(productId);
         if (authenticationToken != null) {
             String preferredUsername = authenticationToken.getPrincipal()
                     .getAttribute("preferred_username");
             model.addAttribute("username", preferredUsername);
         }
         model.addAttribute("product", product);
+        model.addAttribute("reviews", reviews);
         return "online-store/products/product";
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)
-    public String handleNoSuchElementException(ResourceNotFoundException exception, Model model,
+    public String handleResourceNotFoundException(ResourceNotFoundException exception, Model model,
                                                HttpServletResponse response, Locale locale) {
         response.setStatus(HttpStatus.NOT_FOUND.value());
         model.addAttribute("error",
