@@ -86,6 +86,8 @@ class DefaultReviewServiceTest {
                 .mapToObj(i -> new Review(i, (int) i, product, customer,
                         LocalDateTime.now(), "advantages " + i, "disadvantages " + i, "comment " + i))
                 .toList();
+
+        doReturn(true).when(this.productService).existsProductById(1L);
         doReturn(reviews).when(this.reviewRepository).findAllByProductId(1L);
 
         // when
@@ -93,6 +95,9 @@ class DefaultReviewServiceTest {
 
         // then
         assertEquals(reviews, result);
+
+        verify(this.productService).existsProductById(1L);
+        verifyNoMoreInteractions(this.productService);
 
         verify(this.reviewRepository).findAllByProductId(1L);
         verifyNoMoreInteractions(this.reviewRepository);
