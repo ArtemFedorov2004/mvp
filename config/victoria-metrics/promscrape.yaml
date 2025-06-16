@@ -7,7 +7,7 @@ scrape_configs:
     metrics_path: /actuator/prometheus
     oauth2:
       client_id: victoria-metrics
-      client_secret: QSTXQ3Sl96xDIEKcbNjk2Jrn73OeH39n
+      client_secret: 6EOsMhAShvfTacc0dBgIGsgxC6vg3OKL
       token_url: http://172.17.0.1:8082/realms/online-store/protocol/openid-connect/token
       scopes:
         - metrics
@@ -21,7 +21,7 @@ scrape_configs:
     metrics_path: /actuator/prometheus
     oauth2:
       client_id: victoria-metrics
-      client_secret: QSTXQ3Sl96xDIEKcbNjk2Jrn73OeH39n
+      client_secret: 6EOsMhAShvfTacc0dBgIGsgxC6vg3OKL
       token_url: http://172.17.0.1:8082/realms/online-store/protocol/openid-connect/token
       scopes:
         - metrics
@@ -35,7 +35,7 @@ scrape_configs:
     metrics_path: /actuator/prometheus
     oauth2:
       client_id: victoria-metrics
-      client_secret: QSTXQ3Sl96xDIEKcbNjk2Jrn73OeH39n
+      client_secret: 6EOsMhAShvfTacc0dBgIGsgxC6vg3OKL
       token_url: http://172.17.0.1:8082/realms/online-store/protocol/openid-connect/token
       scopes:
         - metrics

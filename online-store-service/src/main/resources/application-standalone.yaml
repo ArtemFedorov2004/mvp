@@ -24,7 +24,7 @@ spring:
         registration:
           keycloak:
             client-id: online-store-service-metrics-client
-            client-secret: e27KuEFHzGkhc6CABXZXWc83XOVBc9BQ
+            client-secret: GlP2cKbm3bIwo7HRM2ayADGt2IkDAG3U
             authorization-grant-type: client_credentials
             scope:
               - metrics_server

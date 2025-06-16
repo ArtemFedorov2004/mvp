@@ -25,7 +25,7 @@ spring:
         registration:
           keycloak:
             client-id: customer-app
-            client-secret: xbpAeDCjrlRelfLjtHicQZ2qtpXfzd0z
+            client-secret: bTH72sFJT7XAewbnsK4NYEtllYnBtnQQ
             scope:
               - openid
               - microprofile-jwt
@@ -33,7 +33,7 @@ spring:
           metrics:
             provider: keycloak
             client-id: customer-app-metrics-client
-            client-secret: ExxpARTtGiQTusgmDw6oizP7GFvq18hH
+            client-secret: CzxywifpcSqudUAx5s1NfISMsQA7SUhB
             authorization-grant-type: client_credentials
             scope:
               - metrics_server
