@@ -5,11 +5,11 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://localhost:8082/realms/online-store
+          issuer-uri: http://172.17.0.1:8082/realms/online-store
       client:
         provider:
           keycloak:
-            issuer-uri: http://localhost:8082/realms/online-store
+            issuer-uri: http://172.17.0.1:8082/realms/online-store
             user-name-attribute: preferred_username
         registration:
           keycloak:
@@ -17,14 +17,14 @@ spring:
             scope:
               - metrics
             client-id: admin-server
-            client-secret: zRVcnREslqyBHh1JlZneuWyL2t01kDVa
+            client-secret: atSjwGR5vyhfS1hgbFdt6uu1zq4pCFfo
           login:
             provider: keycloak
             scope:
               - metrics
               - openid
             client-id: admin-server
-            client-secret: zRVcnREslqyBHh1JlZneuWyL2t01kDVa
+            client-secret: atSjwGR5vyhfS1hgbFdt6uu1zq4pCFfo
 management:
   endpoints:
     web:

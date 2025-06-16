@@ -1,7 +1,7 @@
 online-store:
   services:
     online-store-service:
-      uri: http://localhost:8080
+      uri: http://172.17.0.1:8080
       registration-id: keycloak
 
 server:
@@ -10,7 +10,7 @@ spring:
   boot:
     admin:
       client:
-        url: http://localhost:8083
+        url: http://172.17.0.1:8083
         instance:
           name: customer-app
           service-host-type: ip
@@ -20,12 +20,12 @@ spring:
       client:
         provider:
           keycloak:
-            issuer-uri: http://localhost:8082/realms/online-store
+            issuer-uri: http://172.17.0.1:8082/realms/online-store
             user-name-attribute: preferred_username
         registration:
           keycloak:
             client-id: customer-app
-            client-secret: bTH72sFJT7XAewbnsK4NYEtllYnBtnQQ
+            client-secret: GtaYaVobtjJtWE07abaYQPWUYR5B4w00
             scope:
               - openid
               - microprofile-jwt
@@ -33,13 +33,13 @@ spring:
           metrics:
             provider: keycloak
             client-id: customer-app-metrics-client
-            client-secret: CzxywifpcSqudUAx5s1NfISMsQA7SUhB
+            client-secret: jmEtpf4acnhWnBjlNWOydD4OudmaUyp6
             authorization-grant-type: client_credentials
             scope:
               - metrics_server
       resourceserver:
         jwt:
-          issuer-uri: http://localhost:8082/realms/online-store
+          issuer-uri: http://172.17.0.1:8082/realms/online-store
 management:
   health:
     livenessstate:
