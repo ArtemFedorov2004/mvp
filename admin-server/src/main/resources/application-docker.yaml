@@ -1,0 +1,37 @@
+server:
+  port: 8083
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://172.17.0.1:8082/realms/online-store
+      client:
+        provider:
+          keycloak:
+            issuer-uri: http://172.17.0.1:8082/realms/online-store
+            user-name-attribute: preferred_username
+        registration:
+          keycloak:
+            authorization-grant-type: client_credentials
+            scope:
+              - metrics
+            client-id: admin-server
+            client-secret: atSjwGR5vyhfS1hgbFdt6uu1zq4pCFfo
+          login:
+            provider: keycloak
+            scope:
+              - metrics
+              - openid
+            client-id: admin-server
+            client-secret: atSjwGR5vyhfS1hgbFdt6uu1zq4pCFfo
+management:
+  endpoints:
+    web:
+      exposure:
+        include:
+          - health
+          - prometheus
+  endpoint:
+    health:
+      show-details: always
