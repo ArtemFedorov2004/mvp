@@ -24,3 +24,7 @@ docker run -p 8081:8081 -e SPRING_PROFILES_ACTIVE=docker --name online-store-cus
 mvn -f ./online-store-service clean package
 docker build --build-arg JAR_FILE=online-store-service/target/online-store-service-0.0.1-SNAPSHOT-exec.jar -t online-store/online-store-service:0.0.1 .
 docker run -p 8080:8080 -e SPRING_PROFILES_ACTIVE=docker --name online-store-online-store-service online-store/online-store-service:0.0.1
+
+mvn -f ./manager-app clean package
+docker build --build-arg JAR_FILE=manager-app/target/manager-app-0.0.1-SNAPSHOT-exec.jar -t online-store/manager-app:0.0.1 .
+docker run -p 8084:8084 -e SPRING_PROFILES_ACTIVE=docker --name online-store-manager-app online-store/manager-app:0.0.1

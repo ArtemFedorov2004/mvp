@@ -1,18 +1,12 @@
-online-store:
-  services:
-    online-store-service:
-      uri: http://localhost:8080
-      registration-id: keycloak
-
 server:
-  port: 8081
+  port: 8084
 spring:
   boot:
     admin:
       client:
         url: http://localhost:8083
         instance:
-          name: customer-app
+          name: manager-app
           service-host-type: ip
         enabled: true
   security:
@@ -24,16 +18,16 @@ spring:
             user-name-attribute: preferred_username
         registration:
           keycloak:
-            client-id: customer-app
-            client-secret: SosFcVtCrqTJ9dI06mBcIMeEydv27S4U
+            client-id: manager-app
+            client-secret: HfGwX25mbDfBVkDEQwfDmKDBA16LERLn
             scope:
               - openid
               - microprofile-jwt
-              - create_product_review
+              - edit_products
           metrics:
             provider: keycloak
-            client-id: customer-app-metrics-client
-            client-secret: MU3m4R946YDgl0K18M55BgI5Nbtx2LKL
+            client-id: manager-app-metrics-client
+            client-secret: L05v3el4DW5rzZQmsvB8i8AeyWXicVvx
             authorization-grant-type: client_credentials
             scope:
               - metrics_server

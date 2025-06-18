@@ -316,6 +316,7 @@
           "attributes": {}
         }
       ],
+      "manager-app": [],
       "security-admin-console": [],
       "admin-cli": [],
       "admin-server": [],
@@ -336,6 +337,7 @@
       "online-store-service-metrics-client": [],
       "customer-app-metrics-client": [],
       "victoria-metrics": [],
+      "manager-app-metrics-client": [],
       "account": [
         {
           "id": "57d3c9b8-36f9-4380-b1e5-38ca896ee8a2",
@@ -535,6 +537,38 @@
       "totp": false,
       "emailVerified": false,
       "serviceAccountClientId": "customer-app-metrics-client",
+      "disableableCredentialTypes": [],
+      "requiredActions": [],
+      "realmRoles": [
+        "default-roles-online-store"
+      ],
+      "notBefore": 0,
+      "groups": []
+    },
+    {
+      "id": "71b0614a-e6d7-40c6-acfb-fc64fb46d417",
+      "createdTimestamp": 1750250644751,
+      "username": "service-account-manager-app",
+      "enabled": true,
+      "totp": false,
+      "emailVerified": false,
+      "serviceAccountClientId": "manager-app",
+      "disableableCredentialTypes": [],
+      "requiredActions": [],
+      "realmRoles": [
+        "default-roles-online-store"
+      ],
+      "notBefore": 0,
+      "groups": []
+    },
+    {
+      "id": "2fa7aaeb-5f61-4c51-9ce3-34ddd4bd8779",
+      "createdTimestamp": 1750251357278,
+      "username": "service-account-manager-app-metrics-client",
+      "enabled": true,
+      "totp": false,
+      "emailVerified": false,
+      "serviceAccountClientId": "manager-app-metrics-client",
       "disableableCredentialTypes": [],
       "requiredActions": [],
       "realmRoles": [
@@ -1094,6 +1128,221 @@
         "email"
       ],
       "optionalClientScopes": [
+        "edit_products",
+        "address",
+        "phone",
+        "offline_access",
+        "metrics_server",
+        "edit_online_store",
+        "microprofile-jwt",
+        "metrics",
+        "create_product_review",
+        "view_online_store"
+      ]
+    },
+    {
+      "id": "933a20f6-8005-41c8-81d9-7cf9100b98fa",
+      "clientId": "manager-app",
+      "name": "",
+      "description": "",
+      "rootUrl": "http://172.17.0.1:8084",
+      "adminUrl": "http://172.17.0.1:8084",
+      "baseUrl": "",
+      "surrogateAuthRequired": false,
+      "enabled": true,
+      "alwaysDisplayInConsole": false,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "HfGwX25mbDfBVkDEQwfDmKDBA16LERLn",
+      "redirectUris": [
+        "http://172.17.0.1:8084/*"
+      ],
+      "webOrigins": [
+        "http://172.17.0.1:8084"
+      ],
+      "notBefore": 0,
+      "bearerOnly": false,
+      "consentRequired": false,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": true,
+      "publicClient": false,
+      "frontchannelLogout": true,
+      "protocol": "openid-connect",
+      "attributes": {
+        "oidc.ciba.grant.enabled": "false",
+        "client.secret.creation.time": "1750250644",
+        "backchannel.logout.session.required": "true",
+        "post.logout.redirect.uris": "+",
+        "oauth2.device.authorization.grant.enabled": "false",
+        "display.on.consent.screen": "false",
+        "backchannel.logout.revoke.offline.tokens": "false"
+      },
+      "authenticationFlowBindingOverrides": {},
+      "fullScopeAllowed": true,
+      "nodeReRegistrationTimeout": -1,
+      "protocolMappers": [
+        {
+          "id": "bd9f01bf-a687-4edd-82ec-8d2b4c3b039f",
+          "name": "Client ID",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usersessionmodel-note-mapper",
+          "consentRequired": false,
+          "config": {
+            "user.session.note": "client_id",
+            "introspection.token.claim": "true",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "claim.name": "client_id",
+            "jsonType.label": "String"
+          }
+        },
+        {
+          "id": "7dad7fee-4cab-46d1-a885-e6a092b8293b",
+          "name": "Client Host",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usersessionmodel-note-mapper",
+          "consentRequired": false,
+          "config": {
+            "user.session.note": "clientHost",
+            "introspection.token.claim": "true",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "claim.name": "clientHost",
+            "jsonType.label": "String"
+          }
+        },
+        {
+          "id": "dfed6abb-0b51-40bb-9c06-43f1c61ef5d2",
+          "name": "Client IP Address",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usersessionmodel-note-mapper",
+          "consentRequired": false,
+          "config": {
+            "user.session.note": "clientAddress",
+            "introspection.token.claim": "true",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "claim.name": "clientAddress",
+            "jsonType.label": "String"
+          }
+        }
+      ],
+      "defaultClientScopes": [
+        "web-origins",
+        "acr",
+        "profile",
+        "roles",
+        "email"
+      ],
+      "optionalClientScopes": [
+        "edit_products",
+        "address",
+        "phone",
+        "offline_access",
+        "metrics_server",
+        "edit_online_store",
+        "microprofile-jwt",
+        "metrics",
+        "create_product_review",
+        "view_online_store"
+      ]
+    },
+    {
+      "id": "b8c977c7-ae66-4a0b-b2de-2848fab3d07c",
+      "clientId": "manager-app-metrics-client",
+      "name": "",
+      "description": "",
+      "rootUrl": "",
+      "adminUrl": "",
+      "baseUrl": "",
+      "surrogateAuthRequired": false,
+      "enabled": true,
+      "alwaysDisplayInConsole": false,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "L05v3el4DW5rzZQmsvB8i8AeyWXicVvx",
+      "redirectUris": [
+        "/*"
+      ],
+      "webOrigins": [
+        "/*"
+      ],
+      "notBefore": 0,
+      "bearerOnly": false,
+      "consentRequired": false,
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": true,
+      "publicClient": false,
+      "frontchannelLogout": true,
+      "protocol": "openid-connect",
+      "attributes": {
+        "oidc.ciba.grant.enabled": "false",
+        "oauth2.device.authorization.grant.enabled": "false",
+        "client.secret.creation.time": "1750251357",
+        "backchannel.logout.session.required": "true",
+        "backchannel.logout.revoke.offline.tokens": "false"
+      },
+      "authenticationFlowBindingOverrides": {},
+      "fullScopeAllowed": true,
+      "nodeReRegistrationTimeout": -1,
+      "protocolMappers": [
+        {
+          "id": "11a29689-1da2-4721-a13b-b24c12f74d37",
+          "name": "Client ID",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usersessionmodel-note-mapper",
+          "consentRequired": false,
+          "config": {
+            "user.session.note": "client_id",
+            "introspection.token.claim": "true",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "claim.name": "client_id",
+            "jsonType.label": "String"
+          }
+        },
+        {
+          "id": "fbc55969-8d34-4351-b81c-9af4133e6639",
+          "name": "Client IP Address",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usersessionmodel-note-mapper",
+          "consentRequired": false,
+          "config": {
+            "user.session.note": "clientAddress",
+            "introspection.token.claim": "true",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "claim.name": "clientAddress",
+            "jsonType.label": "String"
+          }
+        },
+        {
+          "id": "00948959-d990-4ec6-9f3e-64c5ee44d293",
+          "name": "Client Host",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usersessionmodel-note-mapper",
+          "consentRequired": false,
+          "config": {
+            "user.session.note": "clientHost",
+            "introspection.token.claim": "true",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "claim.name": "clientHost",
+            "jsonType.label": "String"
+          }
+        }
+      ],
+      "defaultClientScopes": [
+        "web-origins",
+        "acr",
+        "profile",
+        "roles",
+        "email"
+      ],
+      "optionalClientScopes": [
+        "edit_products",
         "address",
         "phone",
         "offline_access",

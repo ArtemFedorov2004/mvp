@@ -17,14 +17,14 @@ spring:
             scope:
               - metrics
             client-id: admin-server
-            client-secret: zRVcnREslqyBHh1JlZneuWyL2t01kDVa
+            client-secret: u5zBLtcLlRna3WfELeZyC9ZzOl9Nl00S
           login:
             provider: keycloak
             scope:
               - metrics
               - openid
             client-id: admin-server
-            client-secret: zRVcnREslqyBHh1JlZneuWyL2t01kDVa
+            client-secret: u5zBLtcLlRna3WfELeZyC9ZzOl9Nl00S
 management:
   endpoints:
     web:

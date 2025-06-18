@@ -1,6 +1,6 @@
 name: online-store
 services:
-  # Infactructure
+  # Infrastructure
   keycloak:
     image: quay.io/keycloak/keycloak:23.0.7
     environment:
@@ -70,3 +70,15 @@ services:
       SPRING_PROFILES_ACTIVE: docker
     ports:
       - '8080:8080'
+  manager-app:
+    restart: always
+    build:
+      dockerfile: Dockerfile
+      args:
+        JAR_FILE: manager-app/target/manager-app-0.0.1-SNAPSHOT-exec.jar
+      tags:
+        - localhost:5000/online-store/manager-app:0.0.1
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    ports:
+      - '8084:8084'
