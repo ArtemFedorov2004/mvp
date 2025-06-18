@@ -1261,6 +1261,7 @@
         "email"
       ],
       "optionalClientScopes": [
+        "edit_products",
         "address",
         "phone",
         "offline_access",
@@ -1611,6 +1612,18 @@
           }
         }
       ]
+    },
+    {
+      "id": "731de40c-7b47-4e5f-a21b-85275e82790b",
+      "name": "edit_products",
+      "description": "",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "false",
+        "gui.order": "",
+        "consent.screen.text": ""
+      }
     },
     {
       "id": "a5eb17af-e36a-4d57-829a-ac8ddf217b8c",
@@ -2102,7 +2115,8 @@
     "view_online_store",
     "create_product_review",
     "metrics",
-    "metrics_server"
+    "metrics_server",
+    "edit_products"
   ],
   "browserSecurityHeaders": {
     "contentSecurityPolicyReportOnly": "",
