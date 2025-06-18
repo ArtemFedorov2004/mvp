@@ -24,6 +24,12 @@ public class SecurityBeans {
                 .authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/online-store-api/products/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/online-store-api/products")
+                        .hasAuthority("SCOPE_edit_products")
+                        .requestMatchers(HttpMethod.PATCH, "/online-store-api/products/{productId:\\d+}")
+                        .hasAuthority("SCOPE_edit_products")
+                        .requestMatchers(HttpMethod.DELETE, "/online-store-api/products/{productId:\\d+}")
+                        .hasAuthority("SCOPE_edit_products")
                         .requestMatchers(HttpMethod.POST, "/online-store-api/products/{productId:\\d+}/reviews")
                         .hasAuthority("SCOPE_create_product_review")
                         .requestMatchers(HttpMethod.PATCH, "/online-store-api/products/{productId:\\d+}/reviews")

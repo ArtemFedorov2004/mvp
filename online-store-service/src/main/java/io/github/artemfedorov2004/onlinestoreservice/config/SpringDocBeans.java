@@ -21,6 +21,7 @@ public class SpringDocBeans {
                             scopes = {
                                     @OAuthScope(name = "openid"),
                                     @OAuthScope(name = "microprofile-jwt"),
+                                    @OAuthScope(name = "edit_products"),
                                     @OAuthScope(name = "create_product_review")
                             }
                     ))

@@ -1,5 +1,7 @@
 package io.github.artemfedorov2004.onlinestoreservice.service;
 
+import io.github.artemfedorov2004.onlinestoreservice.controller.payload.NewProductPayload;
+import io.github.artemfedorov2004.onlinestoreservice.controller.payload.UpdateProductPayload;
 import io.github.artemfedorov2004.onlinestoreservice.entity.Product;
 import io.github.artemfedorov2004.onlinestoreservice.exception.ResourceNotFoundException;
 import io.github.artemfedorov2004.onlinestoreservice.repository.ProductRepository;
@@ -90,6 +92,75 @@ public class DefaultProductServiceTest {
         assertTrue(result);
 
         verify(this.productRepository).existsById(1L);
+        verifyNoMoreInteractions(this.productRepository);
+    }
+
+    @Test
+    void createProduct_ReturnsCreatedProduct() {
+        // given
+        NewProductPayload payload = new NewProductPayload("Новый товар", BigDecimal.valueOf(999.99));
+        Product product = new Product(1L, "Новый товар", BigDecimal.valueOf(999.99));
+
+        doReturn(new Product(1L, "Новый товар", BigDecimal.valueOf(999.99)))
+                .when(this.productRepository).save(new Product(null, "Новый товар", BigDecimal.valueOf(999.99)));
+
+        // when
+        var result = this.service.createProduct(payload);
+
+        // then
+        assertEquals(new Product(1L, "Новый товар", BigDecimal.valueOf(999.99)), result);
+
+        verify(this.productRepository).save(new Product(null, "Новый товар", BigDecimal.valueOf(999.99)));
+        verifyNoMoreInteractions(this.productRepository);
+    }
+
+    @Test
+    void updateProduct_ProductExists_UpdatesProduct() {
+        // given
+        Long productId = 1L;
+        UpdateProductPayload payload = new UpdateProductPayload("Новое название", BigDecimal.valueOf(1999.99));
+        Product product = new Product(1L, "Старое название", BigDecimal.valueOf(999.99));
+
+        doReturn(Optional.of(product))
+                .when(this.productRepository).findById(1L);
+
+        // when
+        this.service.updateProduct(productId, payload);
+
+        // then
+        verify(this.productRepository).findById(productId);
+        verifyNoMoreInteractions(this.productRepository);
+    }
+
+    @Test
+    void updateProduct_ProductDoesNotExist_ThrowsResourceNotFoundException() {
+        // given
+        Long productId = 1L;
+        UpdateProductPayload payload = new UpdateProductPayload("Новое название", BigDecimal.valueOf(1999.99));
+
+        doReturn(Optional.empty())
+                .when(this.productRepository).findById(1L);
+
+        // when
+        assertThrows(ResourceNotFoundException.class, () ->
+                this.service.updateProduct(productId, payload)
+        );
+
+        // then
+        verify(this.productRepository).findById(productId);
+        verifyNoMoreInteractions(this.productRepository);
+    }
+
+    @Test
+    void deleteProduct_DeletesProduct() {
+        // given
+        Long productId = 1L;
+
+        // when
+        this.service.deleteProduct(productId);
+
+        // then
+        verify(this.productRepository).deleteById(productId);
         verifyNoMoreInteractions(this.productRepository);
     }
 }
