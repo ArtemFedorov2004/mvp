@@ -41,3 +41,17 @@ scrape_configs:
         - metrics
       endpoint_params:
         grant_type: client_credentials
+  - job_name: manager_app
+    static_configs:
+      - targets: [ "http://172.17.0.1:8081" ]
+        labels:
+          application: manager-app
+    metrics_path: /actuator/prometheus
+    oauth2:
+      client_id: victoria-metrics
+      client_secret: G6FYzJibXfpyFDi2hZuWNfBUlB5lRAWm
+      token_url: http://172.17.0.1:8082/realms/online-store/protocol/openid-connect/token
+      scopes:
+        - metrics
+      endpoint_params:
+        grant_type: client_credentials

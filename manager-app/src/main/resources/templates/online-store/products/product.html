@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Онлайн магазин</title>
+</head>
+<body>
+<h1>Страница товара.</h1>
+<h2>Добро пожаловать, [[${username}]]</h2>
+<div style="border: solid 2px black; width: 300px">
+    <p data-th-text="${product.title}"></p>
+    <p style="color: green">[[${product.price}]] ₽</p>
+</div>
+<a data-th-href="@{/online-store/products/{productId}/edit(productId=${product.id})}">Изменить товар</a>
+<form method="post" data-th-action="@{/online-store/products/{productId}/delete(productId=${product.id})}">
+    <button id="deleteButton" type="button" style="background-color: red; cursor: pointer">Удалить товар</button>
+    <div id="deleteModal" style="visibility: hidden; border: solid 2px black; width: 300px">
+        <h3 style="font-weight: bold">Подтверждение удаления</h3>
+        <p>Вы действительно хотите удалить товар ?</p>
+        <button id="cancelButton" type="button" style="background-color: yellow; cursor: pointer">Отмена</button>
+        <button id="confirmButton" type="submit" style="background-color: red; cursor: pointer">Удалить</button>
+    </div>
+</form>
+</body>
+<script>
+    const deleteModal = document.getElementById('deleteModal');
+    const deleteButton = document.getElementById('deleteButton');
+    deleteButton.addEventListener("click", (e) => {
+        deleteModal.style.visibility = "visible";
+    });
+    const cancelButton = document.getElementById('cancelButton');
+    cancelButton.addEventListener("click", (e) => {
+        deleteModal.style.visibility = "hidden";
+    });
+</script>
+</html>
