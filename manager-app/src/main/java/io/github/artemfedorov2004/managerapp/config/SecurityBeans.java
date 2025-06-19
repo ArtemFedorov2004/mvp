@@ -40,9 +40,10 @@ public class SecurityBeans {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
-                        .anyRequest().authenticated())
+                        .anyRequest().hasRole("MANAGER"))
                 .oauth2Client(Customizer.withDefaults())
-                .oauth2Login(Customizer.withDefaults())
+                .oauth2Login(oauth2LoginCustomizer -> oauth2LoginCustomizer
+                        .defaultSuccessUrl("/online-store/products/list"))
                 .build();
     }
 

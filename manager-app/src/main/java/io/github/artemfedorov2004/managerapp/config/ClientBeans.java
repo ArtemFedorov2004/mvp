@@ -2,6 +2,9 @@ package io.github.artemfedorov2004.managerapp.config;
 
 import de.codecentric.boot.admin.client.registration.BlockingRegistrationClient;
 import de.codecentric.boot.admin.client.registration.RegistrationClient;
+import io.github.artemfedorov2004.managerapp.client.DefaultProductsRestClient;
+import io.github.artemfedorov2004.managerapp.security.OAuthClientHttpRequestInterceptor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
@@ -12,10 +15,28 @@ import org.springframework.security.oauth2.client.OAuth2AuthorizeRequest;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.security.oauth2.client.web.DefaultOAuth2AuthorizedClientManager;
+import org.springframework.security.oauth2.client.web.OAuth2AuthorizedClientRepository;
+import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestTemplate;
 
 @Configuration
 public class ClientBeans {
+
+    @Bean
+    public DefaultProductsRestClient productsRestClient(
+            @Value("${online-store.services.online-store-service.uri:http://localhost:8080}") String onlineStoreBaseUri,
+            ClientRegistrationRepository clientRegistrationRepository,
+            OAuth2AuthorizedClientRepository authorizedClientRepository,
+            @Value("${online-store.services.online-store-service.registration-id:keycloak}") String registrationId) {
+        return new DefaultProductsRestClient(RestClient.builder()
+                .baseUrl(onlineStoreBaseUri)
+                .requestInterceptor(
+                        new OAuthClientHttpRequestInterceptor(
+                                new DefaultOAuth2AuthorizedClientManager(clientRegistrationRepository,
+                                        authorizedClientRepository), registrationId))
+                .build());
+    }
 
     @Bean
     @ConditionalOnProperty(name = "spring.boot.admin.client.enabled", havingValue = "true")

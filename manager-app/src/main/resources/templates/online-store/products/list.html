@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Онлайн магазин</title>
+</head>
+<body>
+<h1>Все товары представленные в магазине.</h1>
+<h2>Добро пожаловать, [[${username}]]</h2>
+<a data-th-href="@{/online-store/products/create}">Создать новый товар</a>
+<div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr;">
+    <div data-th-each="product : ${products}" style="border: solid 2px black;cursor: pointer; width: 100%"
+         th:onclick="'window.location.href = \'' + @{/online-store/products/{id}(id=${product.id})} + '\''"
+    >
+        <p data-th-text="${product.title}"></p>
+        <p style="color: green">[[${product.price}]] ₽</p>
+    </div>
+</div>
+</body>
+</html>

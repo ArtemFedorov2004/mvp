@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Онлайн магазин</title>
+</head>
+<body>
+<h1>Новый товар</h1>
+<h2>Добро пожаловать, [[${username}]]</h2>
+<div data-th-if="${errors}">
+    <ul>
+        <li
+                data-th-each="error : ${errors}"
+                data-th-text="${error}"
+                style="color: red"
+        ></li>
+    </ul>
+</div>
+<form method="post" data-th-action="@{/online-store/products/create}">
+    <label>
+        Название:<br>
+        <input type="text" name="title" data-th-value="${payload?.title}">
+    </label><br>
+    <label>
+        <span style="color: green">Цена (₽):</span><br>
+        <input type="number" step="0.01" name="price" data-th-value="${payload?.price}"/>
+    </label><br>
+    <button type="submit">Создать</button>
+</form>
+</body>
+</html>
