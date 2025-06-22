@@ -28,3 +28,19 @@ docker run -p 8080:8080 -e SPRING_PROFILES_ACTIVE=docker --name online-store-onl
 mvn -f ./manager-app clean package
 docker build --build-arg JAR_FILE=manager-app/target/manager-app-0.0.1-SNAPSHOT-exec.jar -t online-store/manager-app:0.0.1 .
 docker run -p 8084:8084 -e SPRING_PROFILES_ACTIVE=docker --name online-store-manager-app online-store/manager-app:0.0.1
+
+kubectl create namespace online-store
+default settings 
+kubectl config set-context --current --namespace online-store
+
+RUN MINICUBE
+minikube start --driver=docker --insecure-registry="192.168.49.1/24" --addons="ingress"
+RUN local docker registry
+docker start registry
+
+docker image tag online-store/online-store-service:0.0.1 localhost:5000/online-store/online-store-service:0.0.1
+
+docker image push localhost:5000/online-store/customer-app:0.0.1
+
+kubectl apply --filename /home/artem/Desktop/online-store-parent/k8s/infrastructure/db.yaml
+

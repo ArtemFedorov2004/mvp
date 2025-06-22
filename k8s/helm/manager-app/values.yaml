@@ -1,0 +1,7 @@
+image: 192.168.49.1:5000/online-store/manager-app:0.0.1
+vmagent:
+  image: victoriametrics/vmagent:v1.93.12
+  remoteWrite:
+    url: http://vm-svc.online-store.svc.cluster.local:8428/api/v1/write
+ingress:
+  host: manager.online.store.192.168.49.2.nip.io

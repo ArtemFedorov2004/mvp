@@ -1,0 +1,73 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: online-store-db-pv
+  labels:
+    app: online-store-db
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 2Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: /var/lib/postgresql/data
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: online-store-db-pvc
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: online-store-db
+  labels:
+    app: online-store-db
+spec:
+  selector:
+    matchLabels:
+      app: online-store-db
+  template:
+    metadata:
+      labels:
+        app: online-store-db
+    spec:
+      containers:
+        - name: online-store-db
+          image: postgres:16
+          env:
+            - name: POSTGRES_DB
+              value: online-store
+            - name: POSTGRES_USER
+              value: admin
+            - name: POSTGRES_PASSWORD
+              value: admin
+          ports:
+            - containerPort: 5432
+              name: postgresql
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: postgresql-persistent-storage
+      volumes:
+        - name: postgresql-persistent-storage
+          persistentVolumeClaim:
+            claimName: online-store-db-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: online-store-db-svc
+spec:
+  ports:
+    - port: 5432
+  selector:
+    app: online-store-db
+  clusterIP: None

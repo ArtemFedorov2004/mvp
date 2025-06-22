@@ -1,0 +1,15 @@
+scrape_configs:
+  - job_name: online_store_customer_app
+    static_configs:
+      - targets: ["http://localhost:8080"]
+        labels:
+          application: online-store-customer-app
+    metrics_path: /actuator/prometheus
+    oauth2:
+      client_id: victoria-metrics
+      client_secret: G6FYzJibXfpyFDi2hZuWNfBUlB5lRAWm
+      token_url: http://keycloak.online.store.192.168.49.2.nip.io/realms/online-store/protocol/openid-connect/token
+      scopes:
+        - metrics
+      endpoint_params:
+        grant_type: client_credentials

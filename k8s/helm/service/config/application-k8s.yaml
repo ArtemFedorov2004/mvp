@@ -1,0 +1,53 @@
+spring:
+  boot:
+    admin:
+      client:
+        enabled: true
+        instance:
+          name: online-store-service
+          service-host-type: ip
+        url: http://admin.online.store.192.168.49.2.nip.io
+  datasource:
+    url: jdbc:postgresql://online-store-db-svc.online-store.svc.cluster.local:5432/online-store
+    username: admin
+    password: admin
+  flyway:
+    schemas:
+      - public
+      - online-store
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://keycloak.online.store.192.168.49.2.nip.io/realms/online-store
+      client:
+        registration:
+          keycloak:
+            client-id: online-store-service-metrics-client
+            client-secret: MN4Ul5kHntDOMZ1XwoDZKQbILpmvC1hA
+            authorization-grant-type: client_credentials
+            scope:
+              - metrics_server
+        provider:
+          keycloak:
+            issuer-uri: http://keycloak.online.store.192.168.49.2.nip.io/realms/online-store
+keycloak:
+  uri: http://keycloak.online.store.192.168.49.2.nip.io
+springdoc:
+  swagger-ui:
+    oauth:
+      client-id: online-store-service-swagger-ui
+      use-pkce-with-authorization-code-grant: true
+management:
+  health:
+    livenessstate:
+      enabled: true
+    readinessstate:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: always

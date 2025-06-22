@@ -1,0 +1,55 @@
+online-store:
+  services:
+    online-store-service:
+      uri: http://online-store-service-svc:8080
+      registration-id: keycloak
+
+server:
+  port: 8080
+spring:
+  boot:
+    admin:
+      client:
+        url: http://admin.online.store.192.168.49.2.nip.io
+        instance:
+          name: customer-app
+          service-host-type: ip
+        enabled: true
+  security:
+    oauth2:
+      client:
+        provider:
+          keycloak:
+            issuer-uri: http://keycloak.online.store.192.168.49.2.nip.io/realms/online-store
+            user-name-attribute: preferred_username
+        registration:
+          keycloak:
+            client-id: customer-app
+            client-secret: GtaYaVobtjJtWE07abaYQPWUYR5B4w00
+            scope:
+              - openid
+              - microprofile-jwt
+              - create_product_review
+          metrics:
+            provider: keycloak
+            client-id: customer-app-metrics-client
+            client-secret: jmEtpf4acnhWnBjlNWOydD4OudmaUyp6
+            authorization-grant-type: client_credentials
+            scope:
+              - metrics_server
+      resourceserver:
+        jwt:
+          issuer-uri: http://keycloak.online.store.192.168.49.2.nip.io/realms/online-store
+management:
+  health:
+    livenessstate:
+      enabled: true
+    readinessstate:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: always

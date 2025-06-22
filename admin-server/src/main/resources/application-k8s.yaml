@@ -1,15 +1,15 @@
 server:
-  port: 8083
+  port: 8080
 spring:
   security:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://172.17.0.1:8082/realms/online-store
+          issuer-uri: http://keycloak.online.store.192.168.49.2.nip.io/realms/online-store
       client:
         provider:
           keycloak:
-            issuer-uri: http://172.17.0.1:8082/realms/online-store
+            issuer-uri: http://keycloak.online.store.192.168.49.2.nip.io/realms/online-store
             user-name-attribute: preferred_username
         registration:
           keycloak:

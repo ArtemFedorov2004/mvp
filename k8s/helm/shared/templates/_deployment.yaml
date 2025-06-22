@@ -1,0 +1,99 @@
+{{- define "shared.deployment" -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: online-store-{{ .Chart.Name }}-config
+  labels:
+    helm.sh/chart: {{ .Chart.Name }}
+    app.kubernetes.io/managed-by: {{ $.Release.Service }}
+    app.kubernetes.io/name: {{ .Chart.Name }}
+data:
+{{ (.Files.Glob "config/*").AsConfig | indent 2 }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: online-store-{{ .Chart.Name }}-deployment
+  labels:
+    app: online-store-{{ .Chart.Name }}
+    helm.sh/chart: {{ .Chart.Name }}
+    app.kubernetes.io/managed-by: {{ $.Release.Service }}
+    app.kubernetes.io/name: {{ .Chart.Name }}
+spec:
+  selector:
+    matchLabels:
+      app: online-store-{{ .Chart.Name }}
+  template:
+    metadata:
+      labels:
+        app: online-store-{{ .Chart.Name }}
+    spec:
+      volumes:
+        - name: config
+          configMap:
+            name: online-store-{{ .Chart.Name }}-config
+      containers:
+        - name: online-store-{{ .Chart.Name }}
+          image: {{ .Values.image }}
+          args:
+            - --spring.config.import=/etc/opt/{{ .Chart.Name }}/application-k8s.yaml
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: k8s
+          volumeMounts:
+            - mountPath: /etc/opt/{{ .Chart.Name }}
+              name: config
+        - name: vmagent
+          image: {{ .Values.vmagent.image }}
+          env:
+            - name: NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+          args:
+            - -promscrape.config=/etc/opt/{{ .Chart.Name }}/promscrape.yaml
+            - -remoteWrite.url={{ .Values.vmagent.remoteWrite.url }}
+            - -remoteWrite.label=instance=$(NODE_NAME)
+          volumeMounts:
+            - mountPath: /etc/opt/{{ .Chart.Name }}
+              name: config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: online-store-{{ .Chart.Name }}-svc
+  labels:
+    helm.sh/chart: {{ .Chart.Name }}
+    app.kubernetes.io/managed-by: {{ $.Release.Service }}
+    app.kubernetes.io/name: {{ .Chart.Name }}
+spec:
+  type: NodePort
+  ports:
+    - port: 8080
+      name: http
+  selector:
+    app: online-store-{{ .Chart.Name }}
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: online-store-{{ .Chart.Name }}-ingress
+  labels:
+    helm.sh/chart: {{ .Chart.Name }}
+    app.kubernetes.io/managed-by: {{ $.Release.Service }}
+    app.kubernetes.io/name: {{ .Chart.Name }}
+spec:
+  rules:
+    - host: {{ .Values.ingress.host }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: online-store-{{ .Chart.Name }}-svc
+                port:
+                  name: http
+{{- end -}}
