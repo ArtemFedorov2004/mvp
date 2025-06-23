@@ -14,9 +14,6 @@ docker image push localhost:5000/online-store/customer-app:0.0.1
 kubectl apply --filename /home/artem/Desktop/online-store-parent/k8s/infrastructure/db.yaml
 
 ---
-
----
-
 # Online Store Platform
 
 **Основные компоненты системы**
@@ -135,8 +132,8 @@ scopes:
 </dependency>
 
 <dependency>
-<groupId>org.springframework.boot</groupId>
-<artifactId>spring-boot-starter-oauth2-client</artifactId>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-oauth2-client</artifactId>
 </dependency>
 ```
 
@@ -150,9 +147,7 @@ scopes:
 **Защита Actuator эндпоинтов**
 
 ```java
-.requestMatchers("/actuator/**").
-
-hasAuthority("SCOPE_metrics")
+.requestMatchers("/actuator/**").hasAuthority("SCOPE_metrics")
 ```
 
 **Регистрация в Admin Server:**
@@ -297,9 +292,10 @@ mvn failsafe:integration-test
     <groupId>de.codecentric</groupId>
     <artifactId>spring-boot-admin-starter-client</artifactId>
 </dependency>
+
 <dependency>
-<groupId>org.springframework.boot</groupId>
-<artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
 </dependency>
 ```
 
@@ -439,9 +435,10 @@ mvn failsafe:integration-test
     <groupId>de.codecentric</groupId>
     <artifactId>spring-boot-admin-starter-client</artifactId>
 </dependency>
+
 <dependency>
-<groupId>org.springframework.boot</groupId>
-<artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
 </dependency>
 ```
 
