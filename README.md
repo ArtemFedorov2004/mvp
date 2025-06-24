@@ -1,19 +1,3 @@
-kubectl create namespace online-store
-default settings
-kubectl config set-context --current --namespace online-store
-
-RUN MINICUBE
-minikube start --driver=docker --insecure-registry="192.168.49.1/24" --addons="ingress"
-RUN local docker registry
-docker start registry
-
-docker image tag online-store/online-store-service:0.0.1 localhost:5000/online-store/online-store-service:0.0.1
-
-docker image push localhost:5000/online-store/customer-app:0.0.1
-
-kubectl apply --filename /home/artem/Desktop/online-store-parent/k8s/infrastructure/db.yaml
-
----
 # Online Store Platform
 
 **Основные компоненты системы**
@@ -185,10 +169,64 @@ docker build --build-arg JAR_FILE=online-store-service/target/online-store-servi
 docker run -p 8080:8080 -e SPRING_PROFILES_ACTIVE=docker --name online-store-online-store-service online-store/online-store-service:0.0.1
 ```
 
-**Kubernetes**
+### Развертывание в Kubernetes
+
+Перед развертыванием необходимо подготовить Docker-образ приложения:
 
 ```bash
+docker tag online-store/online-store-service:0.0.1 localhost:5000/online-store/online-store-service:0.0.1
+docker push localhost:5000/online-store/online-store-service:0.0.1
 
+minikube ssh docker pull 192.168.49.1:5000/online-store/online-store-service:0.0.1
+```
+
+**Конфигурация приложения**
+
+Для работы в Kubernetes приложению требуется ConfigMap, который создается из файла application-k8s.yaml:
+
+```bash
+kubectl create configmap online-store-service-config \
+  --from-file=application-k8s.yaml=online-store-service/src/main/resources/application-k8s.yaml
+```
+
+Каждый под содержит два контейнера:
+
+* Основное приложение
+* vmagent
+
+**vmagent**
+
+* Собирает метрики с основного приложения
+* Отправляет их в сервис VictoriaMetrics
+
+**Применение**
+
+```bash
+kubectl apply -f ./k8s/services/online-store-service-deployment.yaml
+```
+
+### Helm-развертывание
+
+Helm загружает общие шаблоны из shared-чарта
+
+**Структура чарта:**
+
+1. **Chart.yaml** - метаинформация + указание зависимости от shared-чарта
+2. **values.yaml** - параметры развертывания
+3. **Папка config** - содержит:
+    * application-k8s.yaml - Spring Boot конфигурация
+    * promscrape.yaml - настройки сбора метрик
+
+**Обновление зависимостей чарта**
+
+Перед установкой или обновлением чарта необходимо выполнить команду:
+```bash
+helm dependency update .
+```
+
+**Основная команда развертывания:**
+```bash
+helm install service .
 ```
 
 ### Тестирование
@@ -336,10 +374,64 @@ docker build --build-arg JAR_FILE=customer-app/target/customer-app-0.0.1-SNAPSHO
 docker run -p 8081:8081 -e SPRING_PROFILES_ACTIVE=docker --name online-store-customer-app online-store/customer-app:0.0.1
 ```
 
-**Kubernetes**
+### Развертывание в Kubernetes
+
+Перед развертыванием необходимо подготовить Docker-образ приложения:
 
 ```bash
+docker tag online-store/customer-app:0.0.1 localhost:5000/online-store/customer-app:0.0.1
+docker push localhost:5000/online-store/customer-app:0.0.1
 
+minikube ssh docker pull 192.168.49.1:5000/online-store/customer-app:0.0.1
+```
+
+**Конфигурация приложения**
+
+Для работы в Kubernetes приложению требуется ConfigMap, который создается из файла application-k8s.yaml:
+
+```bash
+kubectl create configmap online-store-customer-app-config \
+  --from-file=application-k8s.yaml=customer-app/src/main/resources/application-k8s.yaml
+```
+
+Каждый под содержит два контейнера:
+
+* Основное приложение
+* vmagent
+
+**vmagent**
+
+* Собирает метрики с основного приложения
+* Отправляет их в сервис VictoriaMetrics
+
+**Применение**
+
+```bash
+kubectl apply -f ./k8s/services/customer-app-deployment.yaml
+```
+
+### Helm-развертывание
+
+Helm загружает общие шаблоны из shared-чарта
+
+**Структура чарта:**
+
+1. **Chart.yaml** - метаинформация + указание зависимости от shared-чарта
+2. **values.yaml** - параметры развертывания
+3. **Папка config** - содержит:
+    * application-k8s.yaml - Spring Boot конфигурация
+    * promscrape.yaml - настройки сбора метрик
+
+**Обновление зависимостей чарта**
+
+Перед установкой или обновлением чарта необходимо выполнить команду:
+```bash
+helm dependency update .
+```
+
+**Основная команда развертывания:**
+```bash
+helm install customer-app .
 ```
 
 ### Тестирование
@@ -479,10 +571,64 @@ docker build --build-arg JAR_FILE=manager-app/target/manager-app-0.0.1-SNAPSHOT-
 docker run -p 8084:8084 -e SPRING_PROFILES_ACTIVE=docker --name online-store-manager-app online-store/manager-app:0.0.1
 ```
 
-**Kubernetes**
+### Развертывание в Kubernetes
+
+Перед развертыванием необходимо подготовить Docker-образ приложения:
 
 ```bash
+docker tag online-store/manager-app:0.0.1 localhost:5000/online-store/manager-app:0.0.1
+docker push localhost:5000/online-store/manager-app:0.0.1
 
+minikube ssh docker pull 192.168.49.1:5000/online-store/manager-app:0.0.1
+```
+
+**Конфигурация приложения**
+
+Для работы в Kubernetes приложению требуется ConfigMap, который создается из файла application-k8s.yaml:
+
+```bash
+kubectl create configmap online-store-manager-app-config \
+  --from-file=application-k8s.yaml=manager-app/src/main/resources/application-k8s.yaml
+```
+
+Каждый под содержит два контейнера:
+
+* Основное приложение
+* vmagent
+
+**vmagent**
+
+* Собирает метрики с основного приложения
+* Отправляет их в сервис VictoriaMetrics
+
+**Применение**
+
+```bash
+kubectl apply -f ./k8s/services/manager-app-deployment.yaml
+```
+
+### Helm-развертывание
+
+Helm загружает общие шаблоны из shared-чарта
+
+**Структура чарта:**
+
+1. **Chart.yaml** - метаинформация + указание зависимости от shared-чарта
+2. **values.yaml** - параметры развертывания
+3. **Папка config** - содержит:
+    * application-k8s.yaml - Spring Boot конфигурация
+    * promscrape.yaml - настройки сбора метрик
+
+**Обновление зависимостей чарта**
+
+Перед установкой или обновлением чарта необходимо выполнить команду:
+```bash
+helm dependency update .
+```
+
+**Основная команда развертывания:**
+```bash
+helm install manager-app .
 ```
 
 ### Тестирование
@@ -502,6 +648,7 @@ mvn failsafe:integration-test
 
 Для интеграционных тестов используется Wiremock, чтобы замокать обращение к сервису.
 
+
 ## Admin Server
 
 Обеспечивает **мониторинг** всех сервисов
@@ -518,6 +665,92 @@ mvn failsafe:integration-test
     * Stateless, JWT, scope `metrics_server`/`metrics`.
 2. **Для UI:**
     * Stateful, OAuth2 Login.
+
+### Запуск приложения
+
+**Профили конфигурации**
+
+Доступно 3 профиля Spring Boot:
+
+1. **standalone** - Локальная разработка
+2. **docker** - Запуск в Docker-окружении
+3. **k8s** - Развертывание в Kubernetes
+
+**Локальная разработка**
+
+```bash
+mvn spring-boot:run -Dspring-boot.run.profiles=standalone
+```
+
+**Docker**
+
+Сборка и запуск контейнера для текущей версии приложения (0.0.1-SNAPSHOT):
+
+```bash
+docker build --build-arg JAR_FILE=admin-server/target/admin-server-0.0.1-SNAPSHOT-exec.jar -t online-store/admin-server:0.0.1 .
+docker run -p 8083:8083 -e SPRING_PROFILES_ACTIVE=docker --name online-store-admin-server online-store/admin-server:0.0.1
+```
+
+### Развертывание в Kubernetes
+
+Перед развертыванием необходимо подготовить Docker-образ приложения:
+
+```bash
+docker tag online-store/admin-server:0.0.1 localhost:5000/online-store/admin-server:0.0.1
+docker push localhost:5000/online-store/admin-server:0.0.1
+
+minikube ssh docker pull 192.168.49.1:5000/online-store/admin-server:0.0.1
+```
+
+**Конфигурация приложения**
+
+Для работы в Kubernetes приложению требуется ConfigMap, который создается из файла application-k8s.yaml:
+
+```bash
+kubectl create configmap online-store-admin-server-config \
+  --from-file=application-k8s.yaml=admin-server/src/main/resources/application-k8s.yaml
+```
+
+Каждый под содержит два контейнера:
+
+* Основное приложение
+* vmagent
+
+**vmagent**
+
+* Собирает метрики с основного приложения
+* Отправляет их в сервис VictoriaMetrics
+
+**Применение**
+
+```bash
+kubectl apply -f ./k8s/services/admin-server-deployment.yaml
+```
+
+### Helm-развертывание
+
+Helm загружает общие шаблоны из shared-чарта
+
+**Структура чарта:**
+
+1. **Chart.yaml** - метаинформация + указание зависимости от shared-чарта
+2. **values.yaml** - параметры развертывания
+3. **Папка config** - содержит:
+   * application-k8s.yaml - Spring Boot конфигурация
+   * promscrape.yaml - настройки сбора метрик
+
+**Обновление зависимостей чарта**
+
+Перед установкой или обновлением чарта необходимо выполнить команду:
+```bash
+helm dependency update .
+```
+
+**Основная команда развертывания:**
+```bash
+helm install admin-server .
+```
+
 
 ## Keycloak
 
@@ -554,6 +787,20 @@ config/
             └── online-store.json
 ```
 
+**Запуск Keycloak в Kubernetes**
+
+**Создание ConfigMap:**
+```bash
+kubectl create configmap online-store-keycloak-realm \
+  --from-file=./config/k8s/keycloak/import/online-store.json
+```
+
+**Применение конфигурации:**
+```bash
+kubectl apply -f ./k8s/infrastructure/keycloak.yaml
+```
+
+
 ## PostgreSQL
 
 **Запуск PostgreSQL в Docker**
@@ -566,6 +813,14 @@ docker run --name online-store-db -p 5433:5432 \
   -e POSTGRES_PASSWORD=admin \
   -e POSTGRES_DB=online-store \
   postgres:16
+```
+
+**Настройка PostgreSQL в Kubernetes**
+
+Для развертывания PostgreSQL выполните команду:
+
+```bash
+kubectl apply -f ./k8s/infrastructure/db.yaml
 ```
 
 ## VictoriaMetrics
@@ -595,6 +850,13 @@ docker run --name online-store-metrics -p 8428:8428 \
 * **Клиент в Keycloak:** `victoria-metrics`
 * **Scope:** `metrics`
 
+**Настройка VictoriaMetrics в Kubernetes**
+
+Для развертывания выполните:
+```bash
+kubectl apply -f ./k8s/infrastructure/victoria-metrics.yaml
+```
+
 ## Grafana
 
 **Запуск Grafana в Docker**
@@ -611,6 +873,13 @@ docker run --name online-store-grafana -p 3000:3000 \
 **Хранение данных**
 
 Все настройки и дашборды сохраняются в `./data/grafana`
+
+**Настройка Grafana в Kubernetes**
+
+Для развертывания Grafana выполните команду:
+```bash
+kubectl apply -f ./k8s/infrastructure/grafana.yaml
+```
 
 ## Docker-образ для Spring Boot приложений
 
@@ -653,6 +922,41 @@ docker run --name online-store-grafana -p 3000:3000 \
 ```bash
 docker compose up -d
 ```
+
+
+## Kubernetes
+
+**Запуск локального Docker Registry**
+
+Перед работой с образами необходимо запустить локальный registry:
+```bash
+docker start registry
+```
+
+**Подготовка Minikube**
+
+Перед развертыванием выполняем:
+```bash
+minikube start --driver=docker --insecure-registry="192.168.49.1/24" --addons="ingress"
+kubectl config set-context --current --namespace=online-store
+```
+
+**Структура папки k8s**
+
+```text
+k8s/
+├── infrastructure/   # Инфраструктурные компоненты
+├── services/         # Приложения
+└── helm/             # Helm-чарты
+```
+
+
+## Helm
+
+**Библиотечный чарт (shared)**
+
+Выступает как фундамент для всех сервисных чартов.
+
 
 # Лицензия
 
